@@ -42,14 +42,15 @@ object SomeTests {
       This will receive callbacks for just the one file
      */
     fileMonitorActor ! RegisterCallback(
-      event = ENTRY_MODIFY,
-      path = testFile,
-      callback =  modifyCallbackFile
+      event     = ENTRY_MODIFY,
+      path      = testFile,
+      callback  = modifyCallbackFile
     )
     fileMonitorActor ! RegisterCallback(
-      event = ENTRY_CREATE,
-      path = testFile,
-      callback =  createCallbackFile
+      event     = ENTRY_CREATE,
+      path      = testFile,
+      recursive = true,
+      callback  = createCallbackFile
     )
 
     /*
@@ -57,14 +58,14 @@ object SomeTests {
       it will receive callbacks for everything under the desktop directory
     */
     fileMonitorActor ! RegisterCallback(
-      event = ENTRY_MODIFY,
-      path = desktop,
-      callback = modifyCallbackDirectory
+      event     = ENTRY_MODIFY,
+      path      = desktop,
+      callback  = modifyCallbackDirectory
     )
     fileMonitorActor ! RegisterCallback(
-      event = ENTRY_CREATE,
-      path = desktop,
-      callback = createCallbackDirectory
+      event     = ENTRY_CREATE,
+      path      = desktop,
+      callback  = createCallbackDirectory
     )
 
     println("Wait 4s.")
@@ -77,13 +78,10 @@ object SomeTests {
     Thread.sleep(4000)
 
     println("Write file")
-    //modify a monitored file
+    // modify a monitored file
     val writer = new BufferedWriter(new FileWriter(testFile.toFile))
     writer.write("There's text in here: " + new java.util.Date)
     writer.close()
-
-    // #=> Something was modified in a file: /Users/a13075/Desktop/test.txt
-    //     Something was modified in a directory: /Users/a13075/Desktop/test.txt
 
     println("Wait 4s.")
     Thread.sleep(4000)
